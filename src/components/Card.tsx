@@ -6,7 +6,6 @@ type CardProps = {
   card: CardModel;
   onClick?: () => void;
   disabled?: boolean;
-  /** Face-down card blocked by board lock or two cards already up */
   isLocked?: boolean;
 };
 

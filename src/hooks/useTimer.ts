@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  GAME_DURATION_SEC,
-  TICK_SOUND_THRESHOLD_SEC,
-} from "../constants/game";
+import { GAME_DURATION_SEC, TICK_SOUND_THRESHOLD_SEC } from "../constants/game";
 
 type UseTimerOptions = {
   onExpire?: () => void;
@@ -34,7 +31,6 @@ export function useTimer({ onExpire, onTick }: UseTimerOptions = {}) {
     }
   }, []);
 
-  /** Stops the timer and returns seconds remaining at stop time. */
   const stop = useCallback((): number => {
     const remaining = secondsLeftRef.current;
     setIsRunning(false);

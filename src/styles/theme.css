@@ -55,7 +55,6 @@
     );
 }
 
-/* Soft top highlight — “shine” over the gradient */
 .screen-gradient::before {
   content: "";
   position: absolute;

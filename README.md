@@ -14,9 +14,9 @@ A browser-based memory matching game built for the **Evolve Media** frontend cha
 - **Match / no-match modals** with success and error sounds
 - **30-second countdown** with ticking audio from 10 seconds down
 - **Mute toggle** (starts muted; background music when unmuted)
-- **Play again** resets deck, timer, and game state
-- **Bonus:** Live stats (pairs / moves), personal best saved in `localStorage`
-- **UI polish:** Cosmic theme, HUD panels, accessible tap targets
+- **Play again** resets deck, timer, and game state (`gameKey` remount)
+- **Bonus:** Live stats (pairs / moves), personal best in `localStorage`
+- **UI:** Layered cosmic gradient background, HUD panels, themed modals, smart card cursors
 
 ## Install and run
 
@@ -33,11 +33,11 @@ Open the URL shown in the terminal (usually `http://localhost:5173`).
 
 ### Other scripts
 
-| Command        | Description                          |
-| -------------- | ------------------------------------ |
-| `pnpm build`   | Type-check + production build        |
-| `pnpm preview` | Serve the production build locally   |
-| `pnpm lint`    | Run ESLint                           |
+| Command        | Description                        |
+| -------------- | ---------------------------------- |
+| `pnpm build`   | Type-check + production build      |
+| `pnpm preview` | Serve the production build locally |
+| `pnpm lint`    | Run ESLint                         |
 
 Build output goes to `dist/` and can be deployed as a static site.
 
@@ -45,80 +45,104 @@ Build output goes to `dist/` and can be deployed as a static site.
 
 ```
 src/
-  App.tsx              # Screen routing, win stats, play-again reset
-  screens/             # IntroScreen, GameScreen, ResolveScreen
-  components/          # Card, CardGrid, Modal, Timer, MuteButton, …
-  hooks/               # useGame, useTimer, useAudio
-  utils/               # createDeck, shuffle, bestScore
-  types/               # game and stats TypeScript types
-  constants/           # timer duration, modal messages
-  assets/              # SVG images and audio files
-  styles/              # theme, card flip, intro/resolve animations
+  App.tsx                 # Screen routing, win/lose, play-again (gameKey)
+  screens/                # IntroScreen, GameScreen, ResolveScreen
+  components/             # Card, CardGrid, Modal, Timer, MuteButton, …
+  hooks/
+    useGameSession.ts     # Composes audio + game + timer for GameScreen
+    useGame.ts            # Board state, modals, moves
+    useGameModal.ts       # Match/mismatch modal timing
+    useBoardLock.ts       # Board lock state + ref
+    useTimer.ts           # 30s countdown
+    useAudio.ts           # Background + SFX + mute
+  utils/
+    gameRules.ts          # Pure flip/match logic (testable)
+    createDeck.ts, shuffle.ts, bestScore.ts
+  types/                  # Screen, Card, Symbol, GameModal, stats
+  constants/              # GAME_DURATION_SEC, MODAL_MS, messages
+  assets/                 # SVG images and audio
+  styles/                 # theme (gradient), card flip, intro/resolve
 ```
+
+## Architecture
+
+```
+App (navigation, win stats)
+  └── GameScreen (layout only)
+        └── useGameSession
+              ├── useAudio
+              ├── useGame → useBoardLock, useGameModal, gameRules
+              └── useTimer
+```
+
+`GameScreen` does not wire hooks directly — `useGameSession` owns timer expire, win stats (`stop()` return value), modal sounds, and stop-on-last-pair.
 
 ## Technical decisions
 
 ### React + TypeScript + Vite
 
-- **React 19** — component model fits screens, cards, and modals; hooks isolate game logic.
-- **TypeScript** — `Screen`, `Card`, and `Symbol` types catch invalid states at compile time.
-- **Vite** — fast dev server and simple static build; no server required.
+- **React 19** — screens, cards, modals; hooks isolate behavior.
+- **TypeScript** — `Screen`, `Card`, `Symbol`, `GameModal`, stats types.
+- **Vite** — fast dev/build; static deploy.
 
 ### Screen state instead of React Router
 
-The app has exactly three linear screens with no deep links or URL params. A single `screen` union in `App.tsx` (`"intro" | "game" | "resolve"`) keeps navigation obvious and avoids router boilerplate.
+Three linear screens; `screen` union in `App.tsx` (`"intro" | "game" | "resolve"`). No URLs or nested routes needed.
 
-### Custom hooks for separation of concerns
+### Hooks and pure rules
 
-| Hook        | Responsibility                                      |
-| ----------- | --------------------------------------------------- |
-| `useGame`   | Deck, flips, matches, board lock, modals, moves     |
-| `useTimer`  | 30s countdown, tick callback, expire handler        |
-| `useAudio`  | Background loop, SFX, mute state                    |
+| Module | Responsibility |
+| ------ | ---------------- |
+| `gameRules.ts` | Pure: `resolveCardClick`, `flipCard`, `countMatchedPairs`, … |
+| `useBoardLock` | Lock flag + ref for instant click guards |
+| `useGameModal` | Modal state, 1.5s auto-dismiss, sound callbacks |
+| `useGame` | Deck, moves, orchestrates rules + modals |
+| `useTimer` | Countdown; `stop()` returns seconds left |
+| `useAudio` | Mute, background loop, SFX |
+| `useGameSession` | Wires the above for one playable round |
 
-`GameScreen` composes these hooks and wires callbacks (`onWin`, `onLose`, sounds).
+### Tailwind CSS v4 + CSS files
 
-### Tailwind CSS v4 + dedicated CSS files
-
-Tailwind handles layout, spacing, and responsive utilities. Complex animations (card 3D flip, intro slide-in, bounce) live in `src/styles/*.css` where pure CSS is clearer than utility classes.
+Tailwind for layout/responsive grid. Card 3D flip, intro animations, and **layered radial gradients** live in `src/styles/*.css`.
 
 ### Lifted state in `App.tsx`
 
-Win statistics and resolve outcome live in `App` so `ResolveScreen` can show moves, time left, and personal best. **Play again** increments `gameKey` to remount `GameScreen`, guaranteeing a full reset without manual cleanup in every hook.
+Win stats and `ResolveOutcome` live in `App`. **Play again** increments `gameKey` to remount `GameScreen` / `useGameSession` for a full reset.
 
 ### No backend
 
-The game is fully client-side. Personal best uses `localStorage` only.
+Client-only SPA; personal best in `localStorage`.
 
 ## Assumptions and spec interpretations
 
-Documented so reviewers and future you know what was chosen:
-
-| Topic              | Choice implemented                                                                 |
-| ------------------ | ----------------------------------------------------------------------------------- |
-| Modal dismiss      | Auto-closes after **~1.5s**; user can also click OK to dismiss early               |
-| Ticking sound      | Plays **each second** while `secondsLeft` is **10 → 1** (not only once at 10)      |
-| Audio on load      | **Starts muted**; user unmutes via top-right control (avoids autoplay policy issues) |
-| Win condition      | All **4 pairs** matched before timer hits 0                                        |
-| Lose condition     | Timer reaches **0** with fewer than 4 pairs matched                                |
-| Best score ranking | Higher **seconds left** wins; tie-breaker = **fewer moves**                        |
+| Topic | Choice |
+| ----- | ------ |
+| Modal dismiss | Auto-closes after **~1.5s** (`MODAL_MS` in `constants/game.ts`); OK dismisses early |
+| Ticking sound | Each second while `secondsLeft` is **10 → 1** |
+| Audio on load | **Starts muted** (autoplay policy) |
+| Win | All **4 pairs** before timer hits 0 |
+| Lose | Timer **0** with fewer than 4 pairs |
+| Best score | More **seconds left** wins; tie-breaker = **fewer moves** |
 
 ## Bonus features (beyond minimum spec)
 
-- **Live HUD:** `Pairs X/4 · Moves Y` during gameplay
-- **Personal best:** Saved to `localStorage` on win; shown on resolve screen
-- **Board lock fix:** Cards disabled as soon as two cards are face-up (prevents extra clicks)
-- **Cosmic UI pass:** `ScreenShell`, theme tokens, themed modals, matched-card styling
+- Live HUD: pairs and moves
+- Personal best on win (`localStorage`)
+- Board lock when two cards are face-up
+- Cosmic UI: `ScreenShell`, panels, themed modals
+- Refactor: `gameRules` + focused hooks (`useGameModal`, `useBoardLock`, `useGameSession`)
+- UX: cursor `default` on revealed/matched cards; `not-allowed` only on locked face-down cards
+- Shining gradient background (layered radials on `.screen-gradient`)
 
 ## Git history
 
-Features were committed incrementally using [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `style:`, `chore:`, `docs:`) — one logical change per commit, matching the phased build plan.
+Incremental [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `style:`, `refactor:`, `docs:`) — one logical change per commit.
 
 ## Submission (Phase 12)
 
 1. Deploy `dist/` to Vercel or Netlify (Vite preset).
-2. Add production URL above.
-3. Email **liliana.iturribarria@evolvemediallc.com** with repo URL, live URL, and confirmation that requirements are met.
+2. Add production URL in **Live demo** above.
+3. Email **liliana.iturribarria@evolvemediallc.com** with repo URL, live URL, and requirements confirmation.
 
 ## License
 
