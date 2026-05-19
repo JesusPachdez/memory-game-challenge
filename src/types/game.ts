@@ -1,7 +1,14 @@
 export type Screen = "intro" | "game" | "resolve";
 
-// Used in later phases — define now so imports stay stable
 export type Symbol = "star" | "moon" | "sun" | "comet";
+
+/** All pair types — one source of truth for createDeck() */
+export const SYMBOLS: readonly Symbol[] = [
+  "star",
+  "moon",
+  "sun",
+  "comet",
+] as const;
 
 export type Card = {
   id: string;
