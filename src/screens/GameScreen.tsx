@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import { sounds } from "../assets";
 import { CardGrid } from "../components/CardGrid";
 import { Modal } from "../components/Modal";
+import { MuteButton } from "../components/MuteButton";
 import { MODAL_MESSAGES } from "../constants/messages";
+import { useAudio } from "../hooks/useAudio";
 import { useGame } from "../hooks/useGame";
-import { playSound } from "../utils/playSound";
 
 type GameScreenProps = {
   onWin: () => void;
@@ -12,16 +12,17 @@ type GameScreenProps = {
 };
 
 export function GameScreen({ onWin, onLose }: GameScreenProps) {
+  const { isMuted, toggleMute, playCorrect, playIncorrect } = useAudio();
   const { cards, isBoardLocked, modal, handleCardClick, dismissModal } =
     useGame({ onWin });
 
   useEffect(() => {
     if (modal === "match") {
-      playSound(sounds.correct);
+      playCorrect();
     } else if (modal === "mismatch") {
-      playSound(sounds.incorrect);
+      playIncorrect();
     }
-  }, [modal]);
+  }, [modal, playCorrect, playIncorrect]);
 
   const modalMessage =
     modal === "match"
@@ -31,7 +32,9 @@ export function GameScreen({ onWin, onLose }: GameScreenProps) {
         : "";
 
   return (
-    <main className="flex min-h-full flex-col items-center gap-6 p-4 sm:p-6">
+    <main className="relative flex min-h-full flex-col items-center gap-6 p-4 sm:p-6">
+      <MuteButton isMuted={isMuted} onToggle={toggleMute} />
+
       <CardGrid
         cards={cards}
         onCardClick={handleCardClick}
