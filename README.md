@@ -26,6 +26,8 @@ pnpm install
 pnpm dev
 ```
 
+Open [http://localhost:5173](http://localhost:5173) in your browser (Vite’s default port).
+
 | Command        | Description                   |
 | -------------- | ----------------------------- |
 | `pnpm build`   | Type-check + production build |
@@ -41,10 +43,13 @@ src/
   components/          # Card, CardGrid, Modal, Timer, …
   hooks/
     useGameSession.ts  # Coordinates audio, game, and timer
-    useGame.ts         # Board state and modals
+    useGame.ts         # Board state; composes lock + modal hooks
+    useBoardLock.ts    # Input lock during flip/match resolution
+    useGameModal.ts    # Match / no-match modal timing
     useTimer.ts        # Countdown
     useAudio.ts        # Sounds and mute
   utils/gameRules.ts   # Pure flip/match logic
+  types/game.ts        # Screen, Card, modal, and outcome types
   constants/           # Timer duration, messages, MODAL_MS
   styles/              # Theme, card flip, animations
 ```
