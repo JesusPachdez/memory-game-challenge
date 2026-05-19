@@ -10,14 +10,15 @@ export function MuteButton({ isMuted, onToggle }: MuteButtonProps) {
     <button
       type="button"
       onClick={onToggle}
-      className="absolute right-4 top-4 z-10 rounded-full p-2 transition-opacity hover:opacity-80"
+      className="touch-target flex shrink-0 items-center justify-center rounded-full p-2 transition-opacity hover:opacity-80"
       aria-label={isMuted ? "Unmute game" : "Mute game"}
       aria-pressed={isMuted}
     >
       <img
         src={isMuted ? muteIcons.off : muteIcons.on}
         alt=""
-        className="h-8 w-8"
+        className="pointer-events-none h-8 w-8"
+        aria-hidden
       />
     </button>
   );

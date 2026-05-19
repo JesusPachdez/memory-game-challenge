@@ -1,12 +1,41 @@
 @import "tailwindcss";
 
-/* Optional: full-height app shell for later screens */
 html,
 body,
 #root {
   height: 100%;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
+  background-color: #f1f5f9;
+  color: #0f172a;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Visible keyboard focus */
+:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Minimum touch target utility (44×44px) */
+.touch-target {
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+}
+
+/* Safe area for notched devices */
+.safe-padding {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+.safe-padding-top {
+  padding-top: max(1rem, env(safe-area-inset-top));
 }

@@ -3,6 +3,13 @@
   width: 100%;
   aspect-ratio: 1;
   min-height: 2.75rem;
+  min-width: 2.75rem;
+  border-radius: 0.5rem;
+}
+
+.card-scene:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
 }
 
 .card-inner {
@@ -30,7 +37,7 @@
 .card-back {
   background-color: #1e40af;
   color: #facc15;
-  font-size: clamp(1.75rem, 8vw, 2.5rem);
+  font-size: clamp(1.5rem, 7vw, 2.5rem);
   font-weight: 700;
   line-height: 1;
 }
@@ -43,6 +50,8 @@
 .card-front img {
   width: 55%;
   height: 55%;
+  max-width: 4rem;
+  max-height: 4rem;
   object-fit: contain;
 }
 

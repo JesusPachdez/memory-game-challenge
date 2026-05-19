@@ -16,17 +16,23 @@ export function Card({ card, onClick, disabled = false }: CardProps) {
   return (
     <button
       type="button"
-      className="card-scene"
+      className="card-scene touch-target"
       onClick={onClick}
       disabled={!isInteractive}
-      aria-label={isFaceUp ? `${card.symbol} card` : "Hidden card"}
+      aria-label={
+        card.isMatched
+          ? `Matched ${card.symbol} card`
+          : isFaceUp
+            ? `${card.symbol} card`
+            : "Hidden card, press to flip"
+      }
     >
       <div className={`card-inner${isFaceUp ? " is-flipped" : ""}`}>
         <div className="card-face card-back" aria-hidden={isFaceUp}>
           ?
         </div>
         <div className="card-face card-front" aria-hidden={!isFaceUp}>
-          <img src={symbolImages[card.symbol]} alt={card.symbol} />
+          <img src={symbolImages[card.symbol]} alt="" />
         </div>
       </div>
     </button>

@@ -11,9 +11,9 @@ export function ResolveScreen({ outcome, onPlayAgain }: ResolveScreenProps) {
   const isWin = outcome === "win";
 
   return (
-    <main className="flex min-h-full flex-col items-center justify-center gap-8 p-6">
+    <main className="safe-padding safe-padding-top flex min-h-full flex-col items-center justify-center gap-8 p-6">
       <p
-        className={`resolve-message max-w-md text-center text-2xl font-semibold sm:text-3xl ${
+        className={`resolve-message max-w-md px-2 text-center text-xl font-semibold sm:text-3xl ${
           isWin ? "text-green-600" : "text-slate-700"
         }`}
       >
@@ -23,7 +23,7 @@ export function ResolveScreen({ outcome, onPlayAgain }: ResolveScreenProps) {
       <button
         type="button"
         onClick={onPlayAgain}
-        className="hover-bounce rounded-lg bg-blue-600 px-10 py-3 text-lg font-semibold text-white shadow-md transition-colors hover:bg-blue-700"
+        className="hover-bounce touch-target min-h-11 rounded-lg bg-blue-600 px-10 py-3 text-lg font-semibold text-white shadow-md transition-colors hover:bg-blue-700"
       >
         Play again
       </button>

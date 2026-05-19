@@ -70,11 +70,11 @@ export function GameScreen({ onWin, onLose }: GameScreenProps) {
         : "";
 
   return (
-    <main className="relative flex min-h-full flex-col items-center gap-6 p-4 sm:p-6">
-      <MuteButton isMuted={isMuted} onToggle={toggleMute} />
-      <div className="absolute left-4 top-4">
+    <main className="safe-padding safe-padding-top flex min-h-full flex-col items-center gap-4 px-4 py-4 sm:gap-6 sm:px-6 sm:py-6">
+      <header className="flex w-full max-w-2xl shrink-0 items-center justify-between gap-3">
         <Timer secondsLeft={secondsLeft} />
-      </div>
+        <MuteButton isMuted={isMuted} onToggle={toggleMute} />
+      </header>
 
       <CardGrid
         cards={cards}
