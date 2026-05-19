@@ -5,6 +5,7 @@ import { Modal } from "../components/Modal";
 import { MuteButton } from "../components/MuteButton";
 import { ScreenShell } from "../components/ScreenShell";
 import { Timer } from "../components/Timer";
+import { PAIR_COUNT } from "../constants/game";
 import { MODAL_MESSAGES } from "../constants/messages";
 import { useAudio } from "../hooks/useAudio";
 import { useGame } from "../hooks/useGame";
@@ -20,28 +21,19 @@ export function GameScreen({ onWin, onLose }: GameScreenProps) {
   const { isMuted, toggleMute, playCorrect, playIncorrect, playTicking } =
     useAudio();
 
-  const matchedCountRef = useRef(0);
-  const secondsLeftRef = useRef(0);
-  const movesRef = useRef(0);
-
-  const handleExpire = useCallback(() => {
-    if (matchedCountRef.current < 4) {
-      onLose();
-    }
-  }, [onLose]);
+  const onExpireRef = useRef<() => void>(() => {});
 
   const { secondsLeft, stop: stopTimer } = useTimer({
-    onExpire: handleExpire,
     onTick: playTicking,
+    onExpire: () => onExpireRef.current(),
   });
 
-  const handleGameWin = useCallback(() => {
-    stopTimer();
-    onWin({
-      secondsLeft: secondsLeftRef.current,
-      moves: movesRef.current,
-    });
-  }, [onWin, stopTimer]);
+  const handleGameWin = useCallback(
+    ({ moves }: Pick<GameWinStats, "moves">) => {
+      onWin({ moves, secondsLeft: stopTimer() });
+    },
+    [onWin, stopTimer],
+  );
 
   const {
     cards,
@@ -51,33 +43,20 @@ export function GameScreen({ onWin, onLose }: GameScreenProps) {
     modal,
     handleCardClick,
     dismissModal,
-  } = useGame({ onWin: handleGameWin });
+  } = useGame({
+    onWin: handleGameWin,
+    onAllPairsMatched: stopTimer,
+    onMatchShown: playCorrect,
+    onMismatchShown: playIncorrect,
+  });
 
   useEffect(() => {
-    matchedCountRef.current = matchedCount;
-  }, [matchedCount]);
-
-  useEffect(() => {
-    secondsLeftRef.current = secondsLeft;
-  }, [secondsLeft]);
-
-  useEffect(() => {
-    movesRef.current = moves;
-  }, [moves]);
-
-  useEffect(() => {
-    if (matchedCount === 4) {
-      stopTimer();
-    }
-  }, [matchedCount, stopTimer]);
-
-  useEffect(() => {
-    if (modal === "match") {
-      playCorrect();
-    } else if (modal === "mismatch") {
-      playIncorrect();
-    }
-  }, [modal, playCorrect, playIncorrect]);
+    onExpireRef.current = () => {
+      if (matchedCount < PAIR_COUNT) {
+        onLose();
+      }
+    };
+  }, [matchedCount, onLose]);
 
   const modalMessage =
     modal === "match"

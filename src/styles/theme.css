@@ -1,4 +1,3 @@
-/* Design tokens — cosmic memory theme */
 :root {
   --color-bg-deep: #0f172a;
   --color-bg-mid: #1e1b4b;
@@ -127,11 +126,7 @@
 
 .modal-panel--success {
   border: 2px solid var(--color-success-border);
-  background: linear-gradient(
-    180deg,
-    var(--color-success-bg) 0%,
-    #fff 40%
-  );
+  background: linear-gradient(180deg, var(--color-success-bg) 0%, #fff 40%);
 }
 
 .modal-panel--error {

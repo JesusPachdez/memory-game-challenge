@@ -15,3 +15,5 @@ export type Card = {
   isFlipped: boolean;
   isMatched: boolean;
 };
+
+export const MODAL_MS = 1500;

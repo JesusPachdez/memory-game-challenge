@@ -7,16 +7,27 @@ import {
   isGameWon,
   resolveCardClick,
 } from "../utils/gameRules";
+import type { GameWinStats } from "../types/stats";
 import { useBoardLock } from "./useBoardLock";
 import { useGameModal, type GameModal } from "./useGameModal";
+import { PAIR_COUNT } from "../constants/game";
 
 export type { GameModal };
 
 type UseGameOptions = {
-  onWin?: () => void;
+  onWin?: (stats: Pick<GameWinStats, "moves">) => void;
+  /** Fires when the last pair is matched (before the win modal finishes). */
+  onAllPairsMatched?: () => void;
+  onMatchShown?: () => void;
+  onMismatchShown?: () => void;
 };
 
-export function useGame({ onWin }: UseGameOptions = {}) {
+export function useGame({
+  onWin,
+  onAllPairsMatched,
+  onMatchShown,
+  onMismatchShown,
+}: UseGameOptions = {}) {
   const [cards, setCards] = useState(createDeck);
   const [moves, setMoves] = useState(0);
   const cardsRef = useRef(cards);
@@ -26,11 +37,11 @@ export function useGame({ onWin }: UseGameOptions = {}) {
 
   const handleMatchResolved = useCallback(
     (pairsFound: number) => {
-      if (pairsFound === 4) {
-        onWin?.();
+      if (pairsFound === PAIR_COUNT) {
+        onWin?.({ moves });
       }
     },
-    [onWin],
+    [moves, onWin],
   );
 
   const handleMismatchResolved = useCallback(
@@ -52,6 +63,8 @@ export function useGame({ onWin }: UseGameOptions = {}) {
     unlockBoard,
     onMatchResolved: handleMatchResolved,
     onMismatchResolved: handleMismatchResolved,
+    onMatchShown,
+    onMismatchShown,
   });
 
   useEffect(() => {
@@ -76,10 +89,10 @@ export function useGame({ onWin }: UseGameOptions = {}) {
         setCards((current) => flipBackPair(current, firstId, secondId));
       }
     } else if (modal === "match" && isGameWon(cardsRef.current)) {
-      onWin?.();
+      onWin?.({ moves });
     }
     closeModal();
-  }, [closeModal, modal, onWin]);
+  }, [closeModal, modal, moves, onWin]);
 
   const handleCardClick = useCallback(
     (id: string) => {
@@ -103,12 +116,22 @@ export function useGame({ onWin }: UseGameOptions = {}) {
       setCards(result.cards);
 
       if (result.type === "match") {
+        if (result.pairsFound === PAIR_COUNT) {
+          onAllPairsMatched?.();
+        }
         showMatchModal(result.pairsFound);
       } else {
         showMismatchModal(result.firstId, result.secondId);
       }
     },
-    [isBoardLockedRef, lockBoard, modal, showMatchModal, showMismatchModal],
+    [
+      isBoardLockedRef,
+      lockBoard,
+      modal,
+      onAllPairsMatched,
+      showMatchModal,
+      showMismatchModal,
+    ],
   );
 
   return {

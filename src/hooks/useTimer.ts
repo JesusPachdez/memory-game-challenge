@@ -14,8 +14,13 @@ export function useTimer({ onExpire, onTick }: UseTimerOptions = {}) {
   const [isRunning, setIsRunning] = useState(true);
   const intervalRef = useRef<number | null>(null);
   const hasExpiredRef = useRef(false);
+  const secondsLeftRef = useRef(secondsLeft);
   const onExpireRef = useRef(onExpire);
   const onTickRef = useRef(onTick);
+
+  useEffect(() => {
+    secondsLeftRef.current = secondsLeft;
+  }, [secondsLeft]);
 
   useEffect(() => {
     onExpireRef.current = onExpire;
@@ -29,9 +34,12 @@ export function useTimer({ onExpire, onTick }: UseTimerOptions = {}) {
     }
   }, []);
 
-  const stop = useCallback(() => {
+  /** Stops the timer and returns seconds remaining at stop time. */
+  const stop = useCallback((): number => {
+    const remaining = secondsLeftRef.current;
     setIsRunning(false);
     clearTimerInterval();
+    return remaining;
   }, [clearTimerInterval]);
 
   const reset = useCallback(() => {

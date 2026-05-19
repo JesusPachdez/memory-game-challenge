@@ -63,7 +63,6 @@ export type CardClickResult =
       secondId: string;
     };
 
-/** Pure turn resolution after a valid card click. */
 export function resolveCardClick(
   cards: readonly Card[],
   id: string,
@@ -97,7 +96,6 @@ export function resolveCardClick(
   };
 }
 
-/** IDs to flip back when dismissing a mismatch modal early. */
 export function getMismatchFlipBackIds(
   cards: readonly Card[],
 ): [string, string] | null {

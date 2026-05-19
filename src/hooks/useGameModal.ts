@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-
-const MODAL_MS = 1500;
+import { MODAL_MS } from "../types/game";
 
 export type GameModal = "match" | "mismatch" | null;
 
@@ -9,6 +8,8 @@ type UseGameModalOptions = {
   unlockBoard: () => void;
   onMatchResolved: (pairsFound: number) => void;
   onMismatchResolved: (firstId: string, secondId: string) => void;
+  onMatchShown?: () => void;
+  onMismatchShown?: () => void;
 };
 
 export function useGameModal({
@@ -16,6 +17,8 @@ export function useGameModal({
   unlockBoard,
   onMatchResolved,
   onMismatchResolved,
+  onMatchShown,
+  onMismatchShown,
 }: UseGameModalOptions) {
   const [modal, setModal] = useState<GameModal>(null);
   const modalTimeoutRef = useRef<number | null>(null);
@@ -45,6 +48,7 @@ export function useGameModal({
     (pairsFound: number) => {
       lockBoard();
       setModal("match");
+      onMatchShown?.();
 
       modalTimeoutRef.current = window.setTimeout(() => {
         modalTimeoutRef.current = null;
@@ -53,13 +57,14 @@ export function useGameModal({
         onMatchResolved(pairsFound);
       }, MODAL_MS);
     },
-    [lockBoard, onMatchResolved, unlockBoard],
+    [lockBoard, onMatchResolved, onMatchShown, unlockBoard],
   );
 
   const showMismatchModal = useCallback(
     (firstId: string, secondId: string) => {
       lockBoard();
       setModal("mismatch");
+      onMismatchShown?.();
 
       modalTimeoutRef.current = window.setTimeout(() => {
         modalTimeoutRef.current = null;
@@ -68,7 +73,7 @@ export function useGameModal({
         unlockBoard();
       }, MODAL_MS);
     },
-    [lockBoard, onMismatchResolved, unlockBoard],
+    [lockBoard, onMismatchResolved, onMismatchShown, unlockBoard],
   );
 
   return {
