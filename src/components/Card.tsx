@@ -10,7 +10,8 @@ type CardProps = {
 
 export function Card({ card, onClick, disabled = false }: CardProps) {
   const isFaceUp = card.isFlipped || card.isMatched;
-  const isInteractive = Boolean(onClick) && !disabled && !card.isMatched;
+  const isInteractive =
+    Boolean(onClick) && !disabled && !card.isMatched && !card.isFlipped;
 
   return (
     <button
