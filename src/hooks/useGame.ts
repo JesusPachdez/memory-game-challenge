@@ -2,8 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Card } from "../types/game";
 import { createDeck } from "../utils/createDeck";
 
-const PAIR_MISMATCH_MS = 1000;
-const WIN_DELAY_MS = 400;
+const MODAL_MS = 1500;
+
+export type GameModal = "match" | "mismatch" | null;
 
 type UseGameOptions = {
   onWin?: () => void;
@@ -12,12 +13,22 @@ type UseGameOptions = {
 export function useGame({ onWin }: UseGameOptions = {}) {
   const [cards, setCards] = useState<Card[]>(createDeck);
   const [isBoardLocked, setIsBoardLocked] = useState(false);
+  const [modal, setModal] = useState<GameModal>(null);
   const isBoardLockedRef = useRef(false);
   const cardsRef = useRef(cards);
+  const modalTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     cardsRef.current = cards;
   }, [cards]);
+
+  useEffect(() => {
+    return () => {
+      if (modalTimeoutRef.current !== null) {
+        window.clearTimeout(modalTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const matchedCount = useMemo(
     () => cards.filter((card) => card.isMatched).length / 2,
@@ -34,14 +45,89 @@ export function useGame({ onWin }: UseGameOptions = {}) {
     setIsBoardLocked(false);
   }, []);
 
+  const clearModalTimeout = useCallback(() => {
+    if (modalTimeoutRef.current !== null) {
+      window.clearTimeout(modalTimeoutRef.current);
+      modalTimeoutRef.current = null;
+    }
+  }, []);
+
   const resetGame = useCallback(() => {
+    clearModalTimeout();
+    setModal(null);
     setCards(createDeck());
     unlockBoard();
-  }, [unlockBoard]);
+  }, [clearModalTimeout, unlockBoard]);
+
+  const closeModal = useCallback(() => {
+    clearModalTimeout();
+    setModal(null);
+    unlockBoard();
+  }, [clearModalTimeout, unlockBoard]);
+
+  const flipBackCards = useCallback((firstId: string, secondId: string) => {
+    setCards((current) =>
+      current.map((card) =>
+        card.id === firstId || card.id === secondId
+          ? { ...card, isFlipped: false }
+          : card,
+      ),
+    );
+  }, []);
+
+  const showMatchModal = useCallback(
+    (pairsFound: number) => {
+      lockBoard();
+      setModal("match");
+
+      modalTimeoutRef.current = window.setTimeout(() => {
+        modalTimeoutRef.current = null;
+        setModal(null);
+        unlockBoard();
+        if (pairsFound === 4) {
+          onWin?.();
+        }
+      }, MODAL_MS);
+    },
+    [lockBoard, onWin, unlockBoard],
+  );
+
+  const showMismatchModal = useCallback(
+    (firstId: string, secondId: string) => {
+      lockBoard();
+      setModal("mismatch");
+
+      modalTimeoutRef.current = window.setTimeout(() => {
+        modalTimeoutRef.current = null;
+        setModal(null);
+        flipBackCards(firstId, secondId);
+        unlockBoard();
+      }, MODAL_MS);
+    },
+    [flipBackCards, lockBoard, unlockBoard],
+  );
+
+  const dismissModal = useCallback(() => {
+    if (modal === "mismatch") {
+      const flipped = cardsRef.current.filter(
+        (card) => card.isFlipped && !card.isMatched,
+      );
+      if (flipped.length === 2) {
+        flipBackCards(flipped[0].id, flipped[1].id);
+      }
+    } else if (modal === "match") {
+      const pairsFound =
+        cardsRef.current.filter((card) => card.isMatched).length / 2;
+      if (pairsFound === 4) {
+        onWin?.();
+      }
+    }
+    closeModal();
+  }, [closeModal, flipBackCards, modal, onWin]);
 
   const handleCardClick = useCallback(
     (id: string) => {
-      if (isBoardLockedRef.current) return;
+      if (isBoardLockedRef.current || modal !== null) return;
 
       const prev = cardsRef.current;
       const clicked = prev.find((card) => card.id === id);
@@ -72,34 +158,23 @@ export function useGame({ onWin }: UseGameOptions = {}) {
         setCards(matched);
 
         const pairsFound = matched.filter((card) => card.isMatched).length / 2;
-        if (pairsFound === 4) {
-          window.setTimeout(() => onWin?.(), WIN_DELAY_MS);
-        }
+        showMatchModal(pairsFound);
         return;
       }
 
       setCards(withFlip);
-      lockBoard();
-
-      window.setTimeout(() => {
-        setCards((current) =>
-          current.map((card) =>
-            card.id === first.id || card.id === second.id
-              ? { ...card, isFlipped: false }
-              : card,
-          ),
-        );
-        unlockBoard();
-      }, PAIR_MISMATCH_MS);
+      showMismatchModal(first.id, second.id);
     },
-    [lockBoard, onWin, unlockBoard],
+    [modal, showMatchModal, showMismatchModal],
   );
 
   return {
     cards,
     matchedCount,
     isBoardLocked,
+    modal,
     handleCardClick,
+    dismissModal,
     resetGame,
   };
 }
