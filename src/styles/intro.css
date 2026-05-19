@@ -22,15 +22,51 @@
   }
 }
 
+.intro-screen .intro-logo {
+  filter: drop-shadow(0 0 28px rgba(129, 140, 248, 0.45));
+}
+
+.intro-screen h1 {
+  text-shadow: 0 0 48px rgba(129, 140, 248, 0.35);
+}
+
 .intro-logo {
   animation: slide-in-top 0.7s ease-out both;
 }
 
 .intro-start-wrapper {
+  position: relative;
   animation: slide-in-bottom 0.7s ease-out 0.15s both;
 }
 
+.intro-start-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: -0.75rem -1.25rem;
+  z-index: 0;
+  border-radius: 1.25rem;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(99, 102, 241, 0.55) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.intro-start-wrapper .intro-start {
+  position: relative;
+  z-index: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .intro-screen .intro-logo {
+    filter: none;
+  }
+
+  .intro-screen h1 {
+    text-shadow: none;
+  }
+
   .intro-logo,
   .intro-start-wrapper {
     animation: none;

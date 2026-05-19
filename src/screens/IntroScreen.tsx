@@ -8,7 +8,7 @@ type IntroScreenProps = {
 
 export function IntroScreen({ onStart }: IntroScreenProps) {
   return (
-    <ScreenShell centered className="px-6">
+    <ScreenShell centered className="intro-screen px-6">
       <div className="flex w-full flex-col items-center gap-10">
         <div className="flex flex-col items-center gap-5 text-center">
           <img

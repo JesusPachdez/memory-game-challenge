@@ -64,7 +64,12 @@
   object-fit: contain;
 }
 
-.card-scene:disabled {
+.card-scene:disabled.is-revealed,
+.card-scene:disabled.is-matched {
+  cursor: default;
+}
+
+.card-scene:disabled.is-locked {
   cursor: not-allowed;
   opacity: 0.55;
 }

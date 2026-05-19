@@ -25,6 +25,10 @@ export function CardGrid({
       {cards.map((card) => {
         const isCardDisabled =
           disabled || card.isMatched || card.isFlipped || pendingFlipCount >= 2;
+        const isLocked =
+          !card.isFlipped &&
+          !card.isMatched &&
+          (disabled || pendingFlipCount >= 2);
 
         return (
           <Card
@@ -32,6 +36,7 @@ export function CardGrid({
             card={card}
             onClick={onCardClick ? () => onCardClick(card.id) : undefined}
             disabled={isCardDisabled}
+            isLocked={isLocked}
           />
         );
       })}

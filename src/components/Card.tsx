@@ -6,17 +6,34 @@ type CardProps = {
   card: CardModel;
   onClick?: () => void;
   disabled?: boolean;
+  /** Face-down card blocked by board lock or two cards already up */
+  isLocked?: boolean;
 };
 
-export function Card({ card, onClick, disabled = false }: CardProps) {
+export function Card({
+  card,
+  onClick,
+  disabled = false,
+  isLocked = false,
+}: CardProps) {
   const isFaceUp = card.isFlipped || card.isMatched;
+  const isRevealed = card.isFlipped && !card.isMatched;
   const isInteractive =
     Boolean(onClick) && !disabled && !card.isMatched && !card.isFlipped;
+
+  const className = [
+    "card-scene touch-target",
+    card.isMatched && "is-matched",
+    isRevealed && "is-revealed",
+    isLocked && "is-locked",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <button
       type="button"
-      className={`card-scene touch-target${card.isMatched ? " is-matched" : ""}`}
+      className={className}
       onClick={onClick}
       disabled={!isInteractive}
       aria-label={

@@ -25,13 +25,52 @@
 }
 
 .screen-gradient {
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
   min-height: 100%;
-  background: linear-gradient(
-    165deg,
-    var(--color-bg-deep) 0%,
-    var(--color-bg-mid) 45%,
-    var(--color-bg-accent) 100%
+  background-color: var(--color-bg-deep);
+  background-image:
+    radial-gradient(
+      ellipse 90% 55% at 50% -15%,
+      rgba(129, 140, 248, 0.45) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 100% 85%,
+      rgba(139, 92, 246, 0.3) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 60% 45% at 0% 75%,
+      rgba(59, 130, 246, 0.22) 0%,
+      transparent 48%
+    ),
+    linear-gradient(
+      165deg,
+      var(--color-bg-deep) 0%,
+      var(--color-bg-mid) 38%,
+      #1a1744 68%,
+      var(--color-bg-accent) 100%
+    );
+}
+
+/* Soft top highlight — “shine” over the gradient */
+.screen-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 22%,
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 42%
   );
+  pointer-events: none;
+}
+
+.screen-gradient__content {
+  position: relative;
+  z-index: 1;
 }
 
 .panel {
