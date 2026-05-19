@@ -9,14 +9,13 @@ import {
 } from "../utils/gameRules";
 import type { GameWinStats } from "../types/stats";
 import { useBoardLock } from "./useBoardLock";
-import { useGameModal, type GameModal } from "./useGameModal";
+import { useGameModal } from "./useGameModal";
 import { PAIR_COUNT } from "../constants/game";
 
-export type { GameModal };
+export type { GameModal } from "../types/game";
 
 type UseGameOptions = {
   onWin?: (stats: Pick<GameWinStats, "moves">) => void;
-  /** Fires when the last pair is matched (before the win modal finishes). */
   onAllPairsMatched?: () => void;
   onMatchShown?: () => void;
   onMismatchShown?: () => void;
@@ -35,13 +34,17 @@ export function useGame({
   const { isBoardLocked, isBoardLockedRef, lockBoard, unlockBoard } =
     useBoardLock();
 
+  const notifyWin = useCallback(() => {
+    onWin?.({ moves });
+  }, [moves, onWin]);
+
   const handleMatchResolved = useCallback(
     (pairsFound: number) => {
       if (pairsFound === PAIR_COUNT) {
-        onWin?.({ moves });
+        notifyWin();
       }
     },
-    [moves, onWin],
+    [notifyWin],
   );
 
   const handleMismatchResolved = useCallback(
@@ -51,14 +54,7 @@ export function useGame({
     [],
   );
 
-  const {
-    modal,
-    showMatchModal,
-    showMismatchModal,
-    closeModal,
-    clearModalTimeout,
-    setModal,
-  } = useGameModal({
+  const { modal, showMatchModal, showMismatchModal, closeModal } = useGameModal({
     lockBoard,
     unlockBoard,
     onMatchResolved: handleMatchResolved,
@@ -73,14 +69,6 @@ export function useGame({
 
   const matchedCount = useMemo(() => countMatchedPairs(cards), [cards]);
 
-  const resetGame = useCallback(() => {
-    clearModalTimeout();
-    setModal(null);
-    setCards(createDeck());
-    setMoves(0);
-    unlockBoard();
-  }, [clearModalTimeout, setModal, unlockBoard]);
-
   const dismissModal = useCallback(() => {
     if (modal === "mismatch") {
       const ids = getMismatchFlipBackIds(cardsRef.current);
@@ -89,10 +77,10 @@ export function useGame({
         setCards((current) => flipBackPair(current, firstId, secondId));
       }
     } else if (modal === "match" && isGameWon(cardsRef.current)) {
-      onWin?.({ moves });
+      notifyWin();
     }
     closeModal();
-  }, [closeModal, modal, moves, onWin]);
+  }, [closeModal, modal, notifyWin]);
 
   const handleCardClick = useCallback(
     (id: string) => {
@@ -142,6 +130,5 @@ export function useGame({
     modal,
     handleCardClick,
     dismissModal,
-    resetGame,
   };
 }

@@ -61,6 +61,10 @@ export function useAudio() {
     [isMuted],
   );
 
+  const playCorrect = useCallback(() => playSfx("correct"), [playSfx]);
+  const playIncorrect = useCallback(() => playSfx("incorrect"), [playSfx]);
+  const playTicking = useCallback(() => playSfx("ticking"), [playSfx]);
+
   const toggleMute = useCallback(() => {
     setIsMuted((muted) => !muted);
   }, []);
@@ -68,8 +72,8 @@ export function useAudio() {
   return {
     isMuted,
     toggleMute,
-    playCorrect: () => playSfx("correct"),
-    playIncorrect: () => playSfx("incorrect"),
-    playTicking: () => playSfx("ticking"),
+    playCorrect,
+    playIncorrect,
+    playTicking,
   };
 }

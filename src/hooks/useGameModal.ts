@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MODAL_MS } from "../types/game";
+import { MODAL_MS } from "../constants/game";
+import type { GameModal } from "../types/game";
 
-export type GameModal = "match" | "mismatch" | null;
+export type { GameModal };
 
 type UseGameModalOptions = {
   lockBoard: () => void;
@@ -82,6 +83,5 @@ export function useGameModal({
     showMismatchModal,
     closeModal,
     clearModalTimeout,
-    setModal,
   };
 }

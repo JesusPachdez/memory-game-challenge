@@ -1,12 +1,10 @@
 import { useState } from "react";
-import type { Screen } from "./types/game";
+import type { ResolveOutcome, Screen } from "./types/game";
 import type { GameWinStats, ResolveWinStats } from "./types/stats";
 import { IntroScreen } from "./screens/IntroScreen";
 import { GameScreen } from "./screens/GameScreen";
 import { ResolveScreen } from "./screens/ResolveScreen";
 import { loadBestScore, saveBestScoreIfBetter } from "./utils/bestScore";
-
-type ResolveOutcome = "win" | "lose";
 
 function App() {
   const [screen, setScreen] = useState<Screen>("intro");
@@ -25,6 +23,12 @@ function App() {
     setScreen("resolve");
   };
 
+  const handleLose = () => {
+    setWinStats(null);
+    setOutcome("lose");
+    setScreen("resolve");
+  };
+
   const handlePlayAgain = () => {
     setWinStats(null);
     setGameKey((key) => key + 1);
@@ -36,15 +40,7 @@ function App() {
       {screen === "intro" && <IntroScreen onStart={() => setScreen("game")} />}
 
       {screen === "game" && (
-        <GameScreen
-          key={gameKey}
-          onWin={handleWin}
-          onLose={() => {
-            setWinStats(null);
-            setOutcome("lose");
-            setScreen("resolve");
-          }}
-        />
+        <GameScreen key={gameKey} onWin={handleWin} onLose={handleLose} />
       )}
 
       {screen === "resolve" && (

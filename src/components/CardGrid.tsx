@@ -1,4 +1,5 @@
 import type { Card as CardModel } from "../types/game";
+import { getFlippedUnmatched } from "../utils/gameRules";
 import { Card } from "./Card";
 
 type CardGridProps = {
@@ -12,9 +13,7 @@ export function CardGrid({
   onCardClick,
   disabled = false,
 }: CardGridProps) {
-  const pendingFlipCount = cards.filter(
-    (card) => card.isFlipped && !card.isMatched,
-  ).length;
+  const pendingFlipCount = getFlippedUnmatched(cards).length;
 
   return (
     <div

@@ -4,7 +4,6 @@ type ModalVariant = "success" | "error";
 
 type ModalProps = {
   message: string;
-  isOpen: boolean;
   variant: ModalVariant;
   onClose: () => void;
 };
@@ -24,17 +23,13 @@ const VARIANT_CONFIG = {
   },
 } as const;
 
-export function Modal({ message, isOpen, variant, onClose }: ModalProps) {
+export function Modal({ message, variant, onClose }: ModalProps) {
   const okButtonRef = useRef<HTMLButtonElement>(null);
   const config = VARIANT_CONFIG[variant];
 
   useEffect(() => {
-    if (isOpen) {
-      okButtonRef.current?.focus();
-    }
-  }, [isOpen]);
-
-  if (!isOpen) return null;
+    okButtonRef.current?.focus();
+  }, []);
 
   return (
     <div

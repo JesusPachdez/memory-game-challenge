@@ -1,5 +1,9 @@
 export type Screen = "intro" | "game" | "resolve";
 
+export type ResolveOutcome = "win" | "lose";
+
+export type GameModal = "match" | "mismatch" | null;
+
 export type Symbol = "star" | "moon" | "sun" | "comet";
 
 export const SYMBOLS: readonly Symbol[] = [
@@ -15,5 +19,3 @@ export type Card = {
   isFlipped: boolean;
   isMatched: boolean;
 };
-
-export const MODAL_MS = 1500;

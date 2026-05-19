@@ -1,10 +1,11 @@
 import { RESOLVE_MESSAGES } from "../constants/messages";
 import { ScreenShell } from "../components/ScreenShell";
+import type { ResolveOutcome } from "../types/game";
 import type { ResolveWinStats } from "../types/stats";
 import "../styles/resolve.css";
 
 type ResolveScreenProps = {
-  outcome: "win" | "lose";
+  outcome: ResolveOutcome;
   onPlayAgain: () => void;
   winStats?: ResolveWinStats | null;
 };

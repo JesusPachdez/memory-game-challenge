@@ -42,13 +42,6 @@ export function useTimer({ onExpire, onTick }: UseTimerOptions = {}) {
     return remaining;
   }, [clearTimerInterval]);
 
-  const reset = useCallback(() => {
-    hasExpiredRef.current = false;
-    clearTimerInterval();
-    setSecondsLeft(GAME_DURATION_SEC);
-    setIsRunning(true);
-  }, [clearTimerInterval]);
-
   useEffect(() => {
     if (!isRunning) return;
 
@@ -81,8 +74,6 @@ export function useTimer({ onExpire, onTick }: UseTimerOptions = {}) {
 
   return {
     secondsLeft,
-    isRunning,
     stop,
-    reset,
   };
 }

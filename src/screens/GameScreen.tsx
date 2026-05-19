@@ -1,15 +1,10 @@
-import { useCallback, useEffect, useRef } from "react";
 import { CardGrid } from "../components/CardGrid";
 import { GameStats } from "../components/GameStats";
 import { Modal } from "../components/Modal";
 import { MuteButton } from "../components/MuteButton";
 import { ScreenShell } from "../components/ScreenShell";
 import { Timer } from "../components/Timer";
-import { PAIR_COUNT } from "../constants/game";
-import { MODAL_MESSAGES } from "../constants/messages";
-import { useAudio } from "../hooks/useAudio";
-import { useGame } from "../hooks/useGame";
-import { useTimer } from "../hooks/useTimer";
+import { useGameSession } from "../hooks/useGameSession";
 import type { GameWinStats } from "../types/stats";
 
 type GameScreenProps = {
@@ -18,52 +13,19 @@ type GameScreenProps = {
 };
 
 export function GameScreen({ onWin, onLose }: GameScreenProps) {
-  const { isMuted, toggleMute, playCorrect, playIncorrect, playTicking } =
-    useAudio();
-
-  const onExpireRef = useRef<() => void>(() => {});
-
-  const { secondsLeft, stop: stopTimer } = useTimer({
-    onTick: playTicking,
-    onExpire: () => onExpireRef.current(),
-  });
-
-  const handleGameWin = useCallback(
-    ({ moves }: Pick<GameWinStats, "moves">) => {
-      onWin({ moves, secondsLeft: stopTimer() });
-    },
-    [onWin, stopTimer],
-  );
-
   const {
     cards,
     matchedCount,
     moves,
     isBoardLocked,
     modal,
+    modalMessage,
+    secondsLeft,
+    isMuted,
+    toggleMute,
     handleCardClick,
     dismissModal,
-  } = useGame({
-    onWin: handleGameWin,
-    onAllPairsMatched: stopTimer,
-    onMatchShown: playCorrect,
-    onMismatchShown: playIncorrect,
-  });
-
-  useEffect(() => {
-    onExpireRef.current = () => {
-      if (matchedCount < PAIR_COUNT) {
-        onLose();
-      }
-    };
-  }, [matchedCount, onLose]);
-
-  const modalMessage =
-    modal === "match"
-      ? MODAL_MESSAGES.match
-      : modal === "mismatch"
-        ? MODAL_MESSAGES.mismatch
-        : "";
+  } = useGameSession({ onWin, onLose });
 
   return (
     <ScreenShell className="px-4 sm:px-6">
@@ -86,7 +48,6 @@ export function GameScreen({ onWin, onLose }: GameScreenProps) {
       {modal && (
         <Modal
           message={modalMessage}
-          isOpen
           variant={modal === "match" ? "success" : "error"}
           onClose={dismissModal}
         />
