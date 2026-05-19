@@ -15,7 +15,7 @@ export function CardGrid({ cards, onCardClick, disabled = false }: CardGridProps
 
   return (
     <div
-      className="grid w-full max-w-[min(100%,22rem)] grid-cols-2 gap-2 sm:max-w-2xl sm:gap-3 md:grid-cols-4 md:gap-4"
+      className="grid w-full grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4 md:gap-3"
       role="grid"
       aria-label="Memory card board"
       aria-busy={disabled}

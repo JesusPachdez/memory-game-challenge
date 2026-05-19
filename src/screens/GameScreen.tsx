@@ -3,6 +3,7 @@ import { CardGrid } from "../components/CardGrid";
 import { GameStats } from "../components/GameStats";
 import { Modal } from "../components/Modal";
 import { MuteButton } from "../components/MuteButton";
+import { ScreenShell } from "../components/ScreenShell";
 import { Timer } from "../components/Timer";
 import { MODAL_MESSAGES } from "../constants/messages";
 import { useAudio } from "../hooks/useAudio";
@@ -86,26 +87,31 @@ export function GameScreen({ onWin, onLose }: GameScreenProps) {
         : "";
 
   return (
-    <main className="safe-padding safe-padding-top flex min-h-full flex-col items-center gap-4 px-4 py-4 sm:gap-6 sm:px-6 sm:py-6">
-      <header className="flex w-full max-w-2xl shrink-0 items-start justify-between gap-3">
-        <div className="flex flex-col gap-1">
+    <ScreenShell className="px-4 sm:px-6">
+      <header className="panel flex shrink-0 items-start justify-between gap-3 p-4">
+        <div className="flex min-w-0 flex-col gap-2">
           <Timer secondsLeft={secondsLeft} />
           <GameStats pairsMatched={matchedCount} moves={moves} />
         </div>
         <MuteButton isMuted={isMuted} onToggle={toggleMute} />
       </header>
 
-      <CardGrid
-        cards={cards}
-        onCardClick={handleCardClick}
-        disabled={isBoardLocked}
-      />
+      <section className="panel flex flex-1 flex-col justify-center p-3 sm:p-5">
+        <CardGrid
+          cards={cards}
+          onCardClick={handleCardClick}
+          disabled={isBoardLocked}
+        />
+      </section>
 
-      <Modal
-        message={modalMessage}
-        isOpen={modal !== null}
-        onClose={dismissModal}
-      />
-    </main>
+      {modal && (
+        <Modal
+          message={modalMessage}
+          isOpen
+          variant={modal === "match" ? "success" : "error"}
+          onClose={dismissModal}
+        />
+      )}
+    </ScreenShell>
   );
 }

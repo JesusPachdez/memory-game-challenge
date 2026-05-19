@@ -1,4 +1,5 @@
 import { RESOLVE_MESSAGES } from "../constants/messages";
+import { ScreenShell } from "../components/ScreenShell";
 import type { ResolveWinStats } from "../types/stats";
 import "../styles/resolve.css";
 
@@ -17,42 +18,54 @@ export function ResolveScreen({
   const isWin = outcome === "win";
 
   return (
-    <main className="safe-padding safe-padding-top flex min-h-full flex-col items-center justify-center gap-6 p-6 sm:gap-8">
-      <div className="flex max-w-md flex-col items-center gap-3 text-center">
-        <p
-          className={`resolve-message text-xl font-semibold sm:text-3xl ${
+    <ScreenShell centered className="px-6">
+      <div className="panel w-full p-8 text-center">
+        <span
+          className="mb-4 block text-5xl"
+          role="img"
+          aria-label={isWin ? "Victory" : "Time up"}
+        >
+          {isWin ? "✨" : "⏱️"}
+        </span>
+
+        <h1
+          className={`resolve-message text-2xl font-bold sm:text-3xl ${
             isWin ? "text-green-600" : "text-slate-700"
           }`}
         >
           {message}
-        </p>
+        </h1>
 
-        {isWin && winStats && (
-          <div className="flex flex-col gap-2 text-base text-slate-600 sm:text-lg">
-            <p>
+        {isWin && winStats ? (
+          <div className="stat-card mt-4">
+            <p className="text-base font-medium text-slate-700">
               {winStats.secondsLeft}s remaining · {winStats.moves} moves
             </p>
             {winStats.isNewBest ? (
-              <p className="font-semibold text-amber-600">
-                New personal best!
-              </p>
+              <p className="badge-best mt-3">New personal best!</p>
             ) : winStats.bestScore ? (
-              <p className="text-sm text-slate-500 sm:text-base">
+              <p className="mt-3 text-sm text-slate-500">
                 Best on this device: {winStats.bestScore.secondsLeft}s ·{" "}
                 {winStats.bestScore.moves} moves
               </p>
             ) : null}
           </div>
+        ) : (
+          !isWin && (
+            <p className="mt-4 text-base text-slate-500">
+              Keep practicing — you&apos;ll get them all next time.
+            </p>
+          )
         )}
-      </div>
 
-      <button
-        type="button"
-        onClick={onPlayAgain}
-        className="hover-bounce touch-target min-h-11 rounded-lg bg-blue-600 px-10 py-3 text-lg font-semibold text-white shadow-md transition-colors hover:bg-blue-700"
-      >
-        Play again
-      </button>
-    </main>
+        <button
+          type="button"
+          onClick={onPlayAgain}
+          className="btn-primary hover-bounce mt-8 w-full sm:w-auto"
+        >
+          Play again
+        </button>
+      </div>
+    </ScreenShell>
   );
 }

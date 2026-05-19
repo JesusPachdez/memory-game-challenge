@@ -9,9 +9,7 @@ export function Timer({ secondsLeft }: TimerProps) {
 
   return (
     <div
-      className={`touch-target flex items-center rounded-lg px-3 font-mono text-xl font-bold tabular-nums sm:text-2xl ${
-        isUrgent ? "text-red-600" : "text-slate-800"
-      }`}
+      className={`timer-pill touch-target${isUrgent ? " is-urgent" : ""}`}
       role="timer"
       aria-live="polite"
       aria-atomic="true"

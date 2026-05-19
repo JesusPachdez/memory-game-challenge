@@ -1,4 +1,5 @@
 import { logoSrc } from "../assets";
+import { ScreenShell } from "../components/ScreenShell";
 import "../styles/intro.css";
 
 type IntroScreenProps = {
@@ -7,22 +8,32 @@ type IntroScreenProps = {
 
 export function IntroScreen({ onStart }: IntroScreenProps) {
   return (
-    <main className="safe-padding safe-padding-top flex min-h-full flex-col items-center justify-between px-6 py-10 sm:py-12">
-      <img
-        src={logoSrc}
-        alt="Memory game"
-        className="intro-logo w-36 max-w-[min(100%,14rem)] sm:w-48 sm:max-w-[16rem]"
-      />
+    <ScreenShell centered className="px-6">
+      <div className="flex w-full flex-col items-center gap-10">
+        <div className="flex flex-col items-center gap-5 text-center">
+          <img
+            src={logoSrc}
+            alt=""
+            className="intro-logo h-auto w-32 sm:w-40"
+            aria-hidden
+          />
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              Memory Match
+            </h1>
+            <p className="mt-3 max-w-xs text-base text-slate-300 sm:text-lg">
+              Find all 4 pairs before the timer hits zero. Tap the speaker to
+              hear sound.
+            </p>
+          </div>
+        </div>
 
-      <div className="intro-start-wrapper w-full max-w-xs sm:max-w-none flex justify-center">
-        <button
-          type="button"
-          onClick={onStart}
-          className="intro-start hover-bounce touch-target min-h-11 w-full rounded-lg bg-blue-600 px-10 py-3 text-lg font-semibold text-white shadow-md transition-colors hover:bg-blue-700 sm:w-auto"
-        >
-          Start
-        </button>
+        <div className="intro-start-wrapper w-full max-w-xs sm:max-w-sm">
+          <button type="button" onClick={onStart} className="btn-primary w-full">
+            Start
+          </button>
+        </div>
       </div>
-    </main>
+    </ScreenShell>
   );
 }

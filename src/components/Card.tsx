@@ -16,7 +16,7 @@ export function Card({ card, onClick, disabled = false }: CardProps) {
   return (
     <button
       type="button"
-      className="card-scene touch-target"
+      className={`card-scene touch-target${card.isMatched ? " is-matched" : ""}`}
       onClick={onClick}
       disabled={!isInteractive}
       aria-label={

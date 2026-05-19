@@ -7,15 +7,19 @@ type GameStatsProps = {
 
 export function GameStats({ pairsMatched, moves }: GameStatsProps) {
   return (
-    <p
-      className="text-sm font-medium text-slate-600 sm:text-base"
+    <div
+      className="flex flex-wrap gap-2"
       aria-live="polite"
+      aria-label={`${pairsMatched} of ${PAIR_COUNT} pairs matched, ${moves} moves`}
     >
-      Pairs: {pairsMatched} / {PAIR_COUNT}
-      <span className="mx-2 text-slate-400" aria-hidden="true">
-        ·
+      <span className="chip">
+        <span className="chip-label">Pairs </span>
+        {pairsMatched}/{PAIR_COUNT}
       </span>
-      Moves: {moves}
-    </p>
+      <span className="chip">
+        <span className="chip-label">Moves </span>
+        {moves}
+      </span>
+    </div>
   );
 }
