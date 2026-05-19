@@ -148,6 +148,9 @@ export function useGame({ onWin }: UseGameOptions = {}) {
 
       const [first, second] = flipped;
 
+      // Lock board as soon as two cards are up (until modal / turn resolves)
+      lockBoard();
+
       if (first.symbol === second.symbol) {
         const matched = withFlip.map((card) =>
           card.id === first.id || card.id === second.id
@@ -165,7 +168,7 @@ export function useGame({ onWin }: UseGameOptions = {}) {
       setCards(withFlip);
       showMismatchModal(first.id, second.id);
     },
-    [modal, showMatchModal, showMismatchModal],
+    [lockBoard, modal, showMatchModal, showMismatchModal],
   );
 
   return {
