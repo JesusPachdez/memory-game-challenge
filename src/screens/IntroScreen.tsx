@@ -29,7 +29,11 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
         </div>
 
         <div className="intro-start-wrapper w-full max-w-xs sm:max-w-sm">
-          <button type="button" onClick={onStart} className="btn-primary w-full">
+          <button
+            type="button"
+            onClick={onStart}
+            className="intro-start hover-bounce btn-primary w-full"
+          >
             Start
           </button>
         </div>
