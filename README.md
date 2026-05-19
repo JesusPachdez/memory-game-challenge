@@ -4,7 +4,9 @@ A browser-based memory matching game built for the **Evolve Media** frontend cha
 
 ## Live demo
 
-> **Coming soon** — URL will be added after Phase 12 deployment (Vercel/Netlify).
+> **Deploy step:** After Vercel deploy (see below), paste your production URL here, e.g. `https://memory-game-challenge.vercel.app`
+
+**Repository:** [github.com/JesusPachdez/memory-game-challenge](https://github.com/JesusPachdez/memory-game-challenge)
 
 ## Features
 
@@ -138,11 +140,54 @@ Client-only SPA; personal best in `localStorage`.
 
 Incremental [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `style:`, `refactor:`, `docs:`) — one logical change per commit.
 
-## Submission (Phase 12)
+## Deploy (Vercel — recommended)
 
-1. Deploy `dist/` to Vercel or Netlify (Vite preset).
-2. Add production URL in **Live demo** above.
-3. Email **liliana.iturribarria@evolvemediallc.com** with repo URL, live URL, and requirements confirmation.
+This project is a static Vite SPA. **Vercel** is a good fit: zero config with the included `vercel.json`, fast CDN, and automatic deploys from GitHub.
+
+### Option A — GitHub integration (recommended)
+
+1. Push `master` to [github.com/JesusPachdez/memory-game-challenge](https://github.com/JesusPachdez/memory-game-challenge).
+2. Sign in at [vercel.com](https://vercel.com) → **Add New Project** → Import the repo.
+3. Vercel should detect **Vite** automatically. Confirm:
+   - **Install Command:** `pnpm install`
+   - **Build Command:** `pnpm run build`
+   - **Output Directory:** `dist`
+4. Deploy. Copy the production URL (e.g. `https://memory-game-challenge-xxx.vercel.app`).
+5. Update **Live demo** above with that URL and commit: `chore: add deployment URL to README`.
+
+### Option B — Vercel CLI
+
+```bash
+pnpm install
+pnpm run build          # verify locally first
+npx vercel login        # one-time browser auth
+npx vercel --prod       # deploy dist/
+```
+
+### Verify before submitting
+
+- [ ] Intro → Start → game loads
+- [ ] Cards flip, match/mismatch modals and sounds work
+- [ ] Timer, mute, win and lose → resolve screen
+- [ ] Play again starts a fresh game
+- [ ] Works on mobile width (~375px)
+
+## Submission (Evolve Media)
+
+Email **liliana.iturribarria@evolvemediallc.com** with:
+
+- **GitHub repo:** https://github.com/JesusPachdez/memory-game-challenge
+- **Live URL:** _(your Vercel production link)_
+- **Short note** that all challenge requirements are implemented
+
+Example:
+
+> Hi Liliana,  
+> Please find my memory game submission below.  
+> Repository: https://github.com/JesusPachdez/memory-game-challenge  
+> Live demo: https://your-project.vercel.app  
+> All requirements are implemented, including bonus stats and personal best.  
+> Thank you for your time.
 
 ## License
 
