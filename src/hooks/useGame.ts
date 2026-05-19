@@ -12,6 +12,7 @@ type UseGameOptions = {
 
 export function useGame({ onWin }: UseGameOptions = {}) {
   const [cards, setCards] = useState<Card[]>(createDeck);
+  const [moves, setMoves] = useState(0);
   const [isBoardLocked, setIsBoardLocked] = useState(false);
   const [modal, setModal] = useState<GameModal>(null);
   const isBoardLockedRef = useRef(false);
@@ -56,6 +57,7 @@ export function useGame({ onWin }: UseGameOptions = {}) {
     clearModalTimeout();
     setModal(null);
     setCards(createDeck());
+    setMoves(0);
     unlockBoard();
   }, [clearModalTimeout, unlockBoard]);
 
@@ -133,6 +135,8 @@ export function useGame({ onWin }: UseGameOptions = {}) {
       const clicked = prev.find((card) => card.id === id);
       if (!clicked || clicked.isMatched || clicked.isFlipped) return;
 
+      setMoves((count) => count + 1);
+
       const withFlip = prev.map((card) =>
         card.id === id ? { ...card, isFlipped: true } : card,
       );
@@ -174,6 +178,7 @@ export function useGame({ onWin }: UseGameOptions = {}) {
   return {
     cards,
     matchedCount,
+    moves,
     isBoardLocked,
     modal,
     handleCardClick,
