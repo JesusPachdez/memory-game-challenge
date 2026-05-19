@@ -12,10 +12,8 @@ import tickingSound from "./audio/ticking.mp3";
 
 import type { Symbol } from "../types/game";
 
-/** Intro screen */
 export const logoSrc = logo;
 
-/** Card fronts — key must match Symbol type */
 export const symbolImages: Record<Symbol, string> = {
   star,
   moon,
@@ -23,13 +21,11 @@ export const symbolImages: Record<Symbol, string> = {
   comet,
 };
 
-/** Mute button icons (Phase 7) */
 export const muteIcons = {
   on: soundOn,
   off: soundOff,
 } as const;
 
-/** Game sounds (Phases 6–8) */
 export const sounds = {
   background: backgroundSound,
   correct: correctSound,

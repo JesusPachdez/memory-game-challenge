@@ -4,11 +4,14 @@ import { Card } from "./Card";
 type CardGridProps = {
   cards: CardModel[];
   onCardClick?: (id: string) => void;
-  /** Global lock (modal open, evaluating a pair) */
   disabled?: boolean;
 };
 
-export function CardGrid({ cards, onCardClick, disabled = false }: CardGridProps) {
+export function CardGrid({
+  cards,
+  onCardClick,
+  disabled = false,
+}: CardGridProps) {
   const pendingFlipCount = cards.filter(
     (card) => card.isFlipped && !card.isMatched,
   ).length;
@@ -22,10 +25,7 @@ export function CardGrid({ cards, onCardClick, disabled = false }: CardGridProps
     >
       {cards.map((card) => {
         const isCardDisabled =
-          disabled ||
-          card.isMatched ||
-          card.isFlipped ||
-          pendingFlipCount >= 2;
+          disabled || card.isMatched || card.isFlipped || pendingFlipCount >= 2;
 
         return (
           <Card

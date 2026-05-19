@@ -12,7 +12,6 @@ function App() {
   const [screen, setScreen] = useState<Screen>("intro");
   const [outcome, setOutcome] = useState<ResolveOutcome>("win");
   const [winStats, setWinStats] = useState<ResolveWinStats | null>(null);
-  /** Increment to remount GameScreen — fresh deck, timer, and modal state */
   const [gameKey, setGameKey] = useState(0);
 
   const handleWin = (stats: GameWinStats) => {

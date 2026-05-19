@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 type ScreenShellProps = {
   children: ReactNode;
   className?: string;
-  /** Vertically center content (intro / resolve) */
   centered?: boolean;
 };
 
@@ -13,7 +12,9 @@ export function ScreenShell({
   centered = false,
 }: ScreenShellProps) {
   return (
-    <div className={`screen-gradient safe-padding safe-padding-top ${className}`}>
+    <div
+      className={`screen-gradient safe-padding safe-padding-top ${className}`}
+    >
       <div
         className={`mx-auto flex w-full max-w-lg flex-col ${
           centered

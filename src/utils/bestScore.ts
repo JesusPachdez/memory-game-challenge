@@ -22,7 +22,6 @@ export function loadBestScore(): BestScore | null {
   }
 }
 
-/** More time left wins; tie-breaker = fewer moves */
 export function isBetterScore(candidate: BestScore, best: BestScore): boolean {
   if (candidate.secondsLeft !== best.secondsLeft) {
     return candidate.secondsLeft > best.secondsLeft;
@@ -30,7 +29,6 @@ export function isBetterScore(candidate: BestScore, best: BestScore): boolean {
   return candidate.moves < best.moves;
 }
 
-/** Persists score if it beats the saved best. Returns true when a new best was saved. */
 export function saveBestScoreIfBetter(score: BestScore): boolean {
   const current = loadBestScore();
   if (!current || isBetterScore(score, current)) {
