@@ -1,0 +1,56 @@
+@keyframes slide-in-top {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes intro-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.75rem);
+  }
+}
+
+.intro-logo {
+  animation: slide-in-top 0.7s ease-out both;
+}
+
+/* Wrapper runs entrance once; button handles hover bounce separately */
+.intro-start-wrapper {
+  animation: slide-in-bottom 0.7s ease-out 0.15s both;
+}
+
+.intro-start:hover {
+  animation: intro-bounce 0.5s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-logo,
+  .intro-start-wrapper {
+    animation: none;
+  }
+
+  .intro-start:hover {
+    animation: none;
+    transform: scale(1.05);
+  }
+}
