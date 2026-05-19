@@ -18,7 +18,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
         <button
           type="button"
           onClick={onStart}
-          className="intro-start rounded-lg bg-blue-600 px-10 py-3 text-lg font-semibold text-white shadow-md transition-colors hover:bg-blue-700"
+          className="intro-start hover-bounce rounded-lg bg-blue-600 px-10 py-3 text-lg font-semibold text-white shadow-md transition-colors hover:bg-blue-700"
         >
           Start
         </button>

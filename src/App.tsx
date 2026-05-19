@@ -9,6 +9,13 @@ type ResolveOutcome = "win" | "lose";
 function App() {
   const [screen, setScreen] = useState<Screen>("intro");
   const [outcome, setOutcome] = useState<ResolveOutcome>("win");
+  /** Increment to remount GameScreen — fresh deck, timer, and modal state */
+  const [gameKey, setGameKey] = useState(0);
+
+  const handlePlayAgain = () => {
+    setGameKey((key) => key + 1);
+    setScreen("game");
+  };
 
   return (
     <>
@@ -16,6 +23,7 @@ function App() {
 
       {screen === "game" && (
         <GameScreen
+          key={gameKey}
           onWin={() => {
             setOutcome("win");
             setScreen("resolve");
@@ -28,10 +36,7 @@ function App() {
       )}
 
       {screen === "resolve" && (
-        <ResolveScreen
-          outcome={outcome}
-          onPlayAgain={() => setScreen("game")}
-        />
+        <ResolveScreen outcome={outcome} onPlayAgain={handlePlayAgain} />
       )}
     </>
   );
