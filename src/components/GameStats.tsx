@@ -13,12 +13,12 @@ export function GameStats({ pairsMatched, moves }: GameStatsProps) {
       aria-label={`${pairsMatched} of ${PAIR_COUNT} pairs matched, ${moves} moves`}
     >
       <span className="chip">
-        <span className="chip-label">Pairs </span>
-        {pairsMatched}/{PAIR_COUNT}
+        <span className="chip-label">
+          Pairs: {pairsMatched}/{PAIR_COUNT}
+        </span>
       </span>
       <span className="chip">
-        <span className="chip-label">Moves </span>
-        {moves}
+        <span className="chip-label">Moves: {moves}</span>
       </span>
     </div>
   );
