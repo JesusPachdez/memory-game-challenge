@@ -4,6 +4,7 @@ import type { GameWinStats, ResolveWinStats } from "./types/stats";
 import { IntroScreen } from "./screens/IntroScreen";
 import { GameScreen } from "./screens/GameScreen";
 import { ResolveScreen } from "./screens/ResolveScreen";
+import { useAudio } from "./hooks/useAudio";
 import { loadBestScore, saveBestScoreIfBetter } from "./utils/bestScore";
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
   const [outcome, setOutcome] = useState<ResolveOutcome>("win");
   const [winStats, setWinStats] = useState<ResolveWinStats | null>(null);
   const [gameKey, setGameKey] = useState(0);
+  const audio = useAudio();
 
   const handleWin = (stats: GameWinStats) => {
     const isNewBest = saveBestScoreIfBetter(stats);
@@ -40,7 +42,12 @@ function App() {
       {screen === "intro" && <IntroScreen onStart={() => setScreen("game")} />}
 
       {screen === "game" && (
-        <GameScreen key={gameKey} onWin={handleWin} onLose={handleLose} />
+        <GameScreen
+          key={gameKey}
+          audio={audio}
+          onWin={handleWin}
+          onLose={handleLose}
+        />
       )}
 
       {screen === "resolve" && (
