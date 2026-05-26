@@ -2,18 +2,18 @@ import { useCallback, useEffect, useRef } from "react";
 import { PAIR_COUNT } from "../constants/game";
 import { getModalMessage } from "../constants/messages";
 import type { GameWinStats } from "../types/stats";
-import { useAudio } from "./useAudio";
+import type { UseAudioReturn } from "./useAudio";
 import { useGame } from "./useGame";
 import { useTimer } from "./useTimer";
 
 type UseGameSessionOptions = {
   onWin: (stats: GameWinStats) => void;
   onLose: () => void;
+  audio: UseAudioReturn;
 };
 
-export function useGameSession({ onWin, onLose }: UseGameSessionOptions) {
-  const { isMuted, toggleMute, playCorrect, playIncorrect, playTicking } =
-    useAudio();
+export function useGameSession({ onWin, onLose, audio }: UseGameSessionOptions) {
+  const { isMuted, toggleMute, playCorrect, playIncorrect, playTicking } = audio;
 
   const stopRef = useRef<() => number>(() => 0);
 

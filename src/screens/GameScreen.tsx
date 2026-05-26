@@ -4,15 +4,17 @@ import { Modal } from "../components/Modal";
 import { MuteButton } from "../components/MuteButton";
 import { ScreenShell } from "../components/ScreenShell";
 import { Timer } from "../components/Timer";
+import type { UseAudioReturn } from "../hooks/useAudio";
 import { useGameSession } from "../hooks/useGameSession";
 import type { GameWinStats } from "../types/stats";
 
 type GameScreenProps = {
+  audio: UseAudioReturn;
   onWin: (stats: GameWinStats) => void;
   onLose: () => void;
 };
 
-export function GameScreen({ onWin, onLose }: GameScreenProps) {
+export function GameScreen({ audio, onWin, onLose }: GameScreenProps) {
   const {
     cards,
     matchedCount,
@@ -25,7 +27,7 @@ export function GameScreen({ onWin, onLose }: GameScreenProps) {
     toggleMute,
     handleCardClick,
     dismissModal,
-  } = useGameSession({ onWin, onLose });
+  } = useGameSession({ onWin, onLose, audio });
 
   return (
     <ScreenShell className="px-4 sm:px-6">

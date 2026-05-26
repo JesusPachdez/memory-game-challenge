@@ -3,7 +3,15 @@ import { sounds } from "../assets";
 
 type SfxKey = "correct" | "incorrect" | "ticking";
 
-export function useAudio() {
+export type UseAudioReturn = {
+  isMuted: boolean;
+  toggleMute: () => void;
+  playCorrect: () => void;
+  playIncorrect: () => void;
+  playTicking: () => void;
+};
+
+export function useAudio(): UseAudioReturn {
   const [isMuted, setIsMuted] = useState(true);
   const backgroundRef = useRef<HTMLAudioElement | null>(null);
   const sfxRefs = useRef<Record<SfxKey, HTMLAudioElement | null>>({
